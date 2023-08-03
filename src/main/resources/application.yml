@@ -1,0 +1,26 @@
+server:
+  port: 5060
+
+spring:
+  application:
+    name: "prophius-assessment"
+
+  profiles:
+    active: mysql
+
+  devtools:
+    restart:
+      enabled: true
+
+  security:
+    user:
+      roles: admin
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health,info,metrics,loggers,caches, mappings
+
+

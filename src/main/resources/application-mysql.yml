@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:${LOCALHOST_PORT}/${DATABASE_NAME}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    tomcat:
+      max-active: 10
+      max-idle: 8
+      max-wait: 10000
+      min-evictable-idle-time-millis: 1000
+      min-idle: 8
+      time-between-eviction-runs-millis: 1
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        integration.envers.enabled: false
+
+  sql:
+    init:
+      mode: always
+      platform: mysql
