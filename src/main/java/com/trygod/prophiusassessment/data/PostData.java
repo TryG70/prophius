@@ -32,13 +32,4 @@ public class PostData extends BaseEntityData {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentData> comments = new ArrayList<>();
 
-//    public BooleanBuilder buildPredicate(String search){
-//
-//        BooleanBuilder builder = new BooleanBuilder();
-//        com.trygod.prophiusassessment.data.QPostData qRecipient = com.trygod.prophiusassessment.data.QPostData.postData;
-//        if(!search.isBlank()){
-//            builder.or(qRecipient.user.username.containsIgnoreCase(search));
-//        }
-//        return builder;
-//    }
 }

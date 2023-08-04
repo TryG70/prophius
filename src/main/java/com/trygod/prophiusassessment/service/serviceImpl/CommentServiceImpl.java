@@ -1,6 +1,5 @@
 package com.trygod.prophiusassessment.service.serviceImpl;
 
-import com.querydsl.core.types.Predicate;
 import com.trygod.prophiusassessment.data.CommentData;
 import com.trygod.prophiusassessment.dto.CommentDto;
 import com.trygod.prophiusassessment.dto.response.MessageResponse;
@@ -61,12 +60,9 @@ public class CommentServiceImpl implements CommentService<CommentDto, CommentDat
     }
 
     @Override
-    public <U> MessageResponse<Page<U>> findAll(Predicate predicate, Pageable pageable, Class<U> type) {
-        if(type == CommentData.class) {
-            return messageResponse((Page<U>) commentRepository.findAll(predicate, pageable));
-        } else {
-            return messageResponse(Page.empty());
-        }
+    public MessageResponse<Page<CommentDto>> findAll(Pageable pageable) {
+        Page<CommentData> commentDataPage = commentRepository.findAll(pageable);
+        return messageResponse(commentDataPage.map(commentMapper::toDTO));
     }
 
     private <T> MessageResponse<T> messageResponse(T data) {

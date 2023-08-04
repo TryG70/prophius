@@ -1,12 +1,13 @@
 package com.trygod.prophiusassessment.repository;
 
 import com.trygod.prophiusassessment.data.CommentData;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommentRepository extends CrudRepository<CommentData, Long>,
-        QuerydslPredicateExecutor<CommentData>,
-        QuerydslPredicateProjectionRepository<CommentData>{
+public interface CommentRepository extends JpaRepository<CommentData, Long> {
+
+    Page<CommentData> findAll(Pageable pageable);
 }

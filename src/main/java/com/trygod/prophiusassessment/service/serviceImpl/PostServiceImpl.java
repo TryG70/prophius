@@ -1,6 +1,5 @@
 package com.trygod.prophiusassessment.service.serviceImpl;
 
-import com.querydsl.core.types.Predicate;
 import com.trygod.prophiusassessment.data.PostData;
 import com.trygod.prophiusassessment.data.UserData;
 import com.trygod.prophiusassessment.dto.PostDto;
@@ -16,7 +15,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +26,7 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
 
     private final UserService<UserDto, UserData> userService;
 
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     private final PostMapper postMapper;
 
@@ -63,20 +61,21 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
     }
 
     @Override
-    public <U> MessageResponse<Page<U>> findAll(Predicate predicate, Pageable pageable, Class<U> type) {
-        if(type == PostData.class) {
-            return messageResponse((Page<U>) postRepository.findAll(predicate, pageable));
-        } else {
-            return messageResponse(Page.empty());
-        }
+    public MessageResponse<Page<PostDto>> findAll(Pageable pageable) {
+        Page<PostData> posts = postRepository.findAll(pageable);
+        return messageResponse(posts.map(postMapper::toDTO));
     }
 
+
     @Override
-    public MessageResponse<Page<PostDto>> search(String search, PageRequest pageRequest) {
-//        Page<PostDto> userDtoPage = postRepository.findAll(new UserData().buildPredicate(search), pageRequest)
-//                .map(postMapper::toDTO);
-//        return messageResponse(userDtoPage);
-        return null;
+    public MessageResponse<Page<PostDto>> search(String keyword, Pageable pageable) {
+        Page<PostData> posts;
+        if (keyword != null && !keyword.isEmpty()) {
+            posts = postRepository.findAllByContentContainingIgnoreCase(keyword, pageable);
+        } else {
+            posts = postRepository.findAll(pageable);
+        }
+        return messageResponse(posts.map(postMapper::toDTO));
     }
 
     @Override

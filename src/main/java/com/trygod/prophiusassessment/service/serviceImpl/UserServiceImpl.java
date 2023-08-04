@@ -9,7 +9,7 @@ import com.trygod.prophiusassessment.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,15 +55,14 @@ public class UserServiceImpl implements UserService<UserDto, UserData> {
     }
 
     @Override
-    public MessageResponse<Page<UserDto>> search(String search, PageRequest pageRequest) {
-//        Page<UserDto> userDtoPage = userRepository.findAll(new UserData().buildPredicate(search), pageRequest)
-//                .map(userData -> {
-//                    UserDto userDto = new UserDto();
-//                    BeanUtils.copyProperties(userData, userDto);
-//                    return userDto;
-//                });
-//        return messageResponse(userDtoPage);
-        return null;
+    public MessageResponse<Page<UserDto>> search(String keyWord, Pageable pageable) {
+        Page<UserData> userDataPage = userRepository.findAllByUsernameContainingIgnoreCase(keyWord, pageable);
+        Page<UserDto> userDtoPage = userDataPage.map(userData -> {
+            UserDto userDto = new UserDto();
+            BeanUtils.copyProperties(userData, userDto);
+            return userDto;
+        });
+        return messageResponse(userDtoPage);
     }
 
     @Override
