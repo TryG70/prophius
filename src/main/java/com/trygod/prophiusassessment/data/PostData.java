@@ -13,14 +13,14 @@ import java.util.List;
 @Table(name = "POSTS")
 public class PostData extends BaseEntityData {
 
-    @Column(name = "CONTENT", nullable = false)
+    @Column(name = "CONTENT")
     private String content;
 
     @Column(name = "LIKE_COUNT")
     private int likeCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USERS_ID", nullable = false)
+    @JoinColumn(name = "USERS_ID")
     private UserData user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)

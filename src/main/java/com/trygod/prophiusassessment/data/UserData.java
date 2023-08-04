@@ -13,13 +13,13 @@ import java.util.Set;
 @Table(name = "USERS")
 public class UserData extends BaseEntityData {
 
-    @Column(name = "USERNAME", nullable = false, unique = true)
+    @Column(name = "USERNAME", unique = true)
     private String username;
 
-    @Column(name = "PASSWORD", length = 1000, nullable = false)
+    @Column(name = "PASSWORD")
     private String password;
 
-    @Column(name = "EMAIL", nullable = false, unique = true)
+    @Column(name = "EMAIL", unique = true)
     private String email;
 
     @Column(name = "PROFILE_PICTURE")

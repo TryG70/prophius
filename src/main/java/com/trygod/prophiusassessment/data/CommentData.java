@@ -9,16 +9,16 @@ import lombok.Data;
 @Table(name = "COMMENTS")
 public class CommentData extends BaseEntityData {
 
-    @Column(name = "CONTENT",nullable = false)
+    @Column(name = "CONTENT")
     private String content;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "POSTS_ID", nullable = false)
+    @JoinColumn(name = "POSTS_ID")
     private PostData post;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USERS_ID", nullable = false)
+    @JoinColumn(name = "USERS_ID")
     private UserData user;
 }
