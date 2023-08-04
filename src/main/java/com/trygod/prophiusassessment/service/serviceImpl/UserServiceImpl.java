@@ -1,25 +1,22 @@
 package com.trygod.prophiusassessment.service.serviceImpl;
 
-import com.querydsl.core.types.Predicate;
 import com.trygod.prophiusassessment.data.UserData;
 import com.trygod.prophiusassessment.dto.UserDto;
 import com.trygod.prophiusassessment.dto.response.MessageResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.repository.UserRepository;
-import com.trygod.prophiusassessment.service.BaseEntityService;
-import com.trygod.prophiusassessment.service.PageableService;
+import com.trygod.prophiusassessment.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements BaseEntityService<UserDto, UserData>, PageableService<UserDto> {
+public class UserServiceImpl implements UserService<UserDto, UserData> {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -69,14 +66,6 @@ public class UserServiceImpl implements BaseEntityService<UserDto, UserData>, Pa
     }
 
     @Override
-    public <U> MessageResponse<Page<U>> findAll(Predicate predicate, Pageable pageable, Class<U> type) {
-        if(type == UserData.class) {
-            return messageResponse((Page<U>) userRepository.findAll(predicate, pageable));
-        } else {
-            return messageResponse(Page.empty());
-        }
-    }
-
     public MessageResponse<UserDto> findByUsername(String username) {
         UserData userData = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(UserData.class, username));
         UserDto userDto = new UserDto();
@@ -84,6 +73,7 @@ public class UserServiceImpl implements BaseEntityService<UserDto, UserData>, Pa
         return messageResponse(userDto);
     }
 
+    @Override
     public void followUser(Long followerId, Long followeeId){
         UserData follower = findById(followerId);
         UserData followee = findById(followeeId);
@@ -92,6 +82,7 @@ public class UserServiceImpl implements BaseEntityService<UserDto, UserData>, Pa
         userRepository.save(follower);
     }
 
+    @Override
     public void unfollowUser(Long followerId, Long followeeId) {
         UserData follower = findById(followerId);
         UserData followee = findById(followeeId);
