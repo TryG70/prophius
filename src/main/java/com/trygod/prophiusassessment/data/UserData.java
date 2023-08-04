@@ -38,6 +38,9 @@ public class UserData extends BaseEntityData {
     @ManyToMany(mappedBy = "followers")
     private Set<UserData> following = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<NotificationData> notifications = new HashSet<>();
+
 
 //    public BooleanBuilder buildPredicate(String search){
 //

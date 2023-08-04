@@ -8,6 +8,8 @@ import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.mapper.CommentMapper;
 import com.trygod.prophiusassessment.repository.CommentRepository;
 import com.trygod.prophiusassessment.service.CommentService;
+import com.trygod.prophiusassessment.service.NotificationService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -20,12 +22,17 @@ public class CommentServiceImpl implements CommentService<CommentDto, CommentDat
 
     private final CommentRepository commentRepository;
 
+    private final NotificationService notificationService;
+
     private final CommentMapper commentMapper;
 
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public MessageResponse<CommentDto> create(CommentDto request) {
         CommentData commentData = commentMapper.toEntity(request);
         commentData = commentRepository.save(commentData);
+        Long postOwnerId = commentData.getPost().getUser().getId();
+        notificationService.notifyUser(postOwnerId, commentData.getUser().getUsername() + " commented on your post");
         return messageResponse(commentMapper.toDTO(commentData));
     }
 

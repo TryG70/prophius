@@ -9,8 +9,10 @@ import com.trygod.prophiusassessment.dto.response.MessageResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.mapper.PostMapper;
 import com.trygod.prophiusassessment.repository.PostRepository;
+import com.trygod.prophiusassessment.service.NotificationService;
 import com.trygod.prophiusassessment.service.PostService;
 import com.trygod.prophiusassessment.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,8 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
     private final PostRepository postRepository;
 
     private final UserService<UserDto, UserData> userService;
+
+    private NotificationService notificationService;
 
     private final PostMapper postMapper;
 
@@ -76,12 +80,14 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
     }
 
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public void likePost(Long postId, Long userId) {
         PostData postData = findById(postId);
         UserData userData = userService.findById(userId);
         postData.getLikedBy().add(userData);
         postData.setLikeCount(postData.getLikedBy().size());
         postRepository.save(postData);
+        notificationService.notifyUser(postData.getUser().getId(), userData.getUsername() + " liked your post");
     }
 
     @Override
