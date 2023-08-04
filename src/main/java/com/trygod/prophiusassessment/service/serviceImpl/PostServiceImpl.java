@@ -34,7 +34,7 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
     public MessageResponse<PostDto> create(PostDto request) {
         PostData postData = postMapper.toEntity(request);
         postData = postRepository.save(postData);
-        return messageResponse(postMapper.toDTO(postData));
+        return MessageResponse.response(postMapper.toDTO(postData));
     }
 
     @Override
@@ -43,7 +43,7 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
         PostData postData = postMapper.toEntity(request);
         BeanUtils.copyProperties(postData, savedPostData);
         savedPostData = postRepository.save(savedPostData);
-        return messageResponse(postMapper.toDTO(savedPostData));
+        return MessageResponse.response(postMapper.toDTO(savedPostData));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
     @Override
     public MessageResponse<Page<PostDto>> findAll(Pageable pageable) {
         Page<PostData> posts = postRepository.findAll(pageable);
-        return messageResponse(posts.map(postMapper::toDTO));
+        return MessageResponse.response(posts.map(postMapper::toDTO));
     }
 
 
@@ -75,7 +75,7 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
         } else {
             posts = postRepository.findAll(pageable);
         }
-        return messageResponse(posts.map(postMapper::toDTO));
+        return MessageResponse.response(posts.map(postMapper::toDTO));
     }
 
     @Override
@@ -96,11 +96,5 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
         postData.getLikedBy().remove(userData);
         postData.setLikeCount(postData.getLikedBy().size());
         postRepository.save(postData);
-    }
-
-    private <T> MessageResponse<T> messageResponse(T data) {
-        MessageResponse<T> response = new MessageResponse<>();
-        response.setResult(data);
-        return response;
     }
 }

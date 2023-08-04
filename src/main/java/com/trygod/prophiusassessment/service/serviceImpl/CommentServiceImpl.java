@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService<CommentDto, CommentDat
         commentData = commentRepository.save(commentData);
         Long postOwnerId = commentData.getPost().getUser().getId();
         notificationService.notifyUser(postOwnerId, commentData.getUser().getUsername() + " commented on your post");
-        return messageResponse(commentMapper.toDTO(commentData));
+        return MessageResponse.response(commentMapper.toDTO(commentData));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService<CommentDto, CommentDat
         CommentData commentData = commentMapper.toEntity(request);
         BeanUtils.copyProperties(commentData, savedCommentData);
         savedCommentData = commentRepository.save(savedCommentData);
-        return messageResponse(commentMapper.toDTO(savedCommentData));
+        return MessageResponse.response(commentMapper.toDTO(savedCommentData));
 
     }
 
@@ -62,12 +62,6 @@ public class CommentServiceImpl implements CommentService<CommentDto, CommentDat
     @Override
     public MessageResponse<Page<CommentDto>> findAll(Pageable pageable) {
         Page<CommentData> commentDataPage = commentRepository.findAll(pageable);
-        return messageResponse(commentDataPage.map(commentMapper::toDTO));
-    }
-
-    private <T> MessageResponse<T> messageResponse(T data) {
-        MessageResponse<T> response = new MessageResponse<>();
-        response.setResult(data);
-        return response;
+        return MessageResponse.response(commentDataPage.map(commentMapper::toDTO));
     }
 }

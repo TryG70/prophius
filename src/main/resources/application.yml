@@ -38,3 +38,9 @@ management:
         include: health,info,metrics,loggers,caches, mappings
 
 
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    operationsSorter: method
+    path: /swagger-ui.html
+

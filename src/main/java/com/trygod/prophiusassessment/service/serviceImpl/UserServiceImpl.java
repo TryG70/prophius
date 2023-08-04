@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService<UserDto, UserData> {
 
     private final UserRepository userRepository;
+
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -28,7 +29,7 @@ public class UserServiceImpl implements UserService<UserDto, UserData> {
         userData.setPassword(passwordEncoder.encode(request.getPassword()));
         userData = userRepository.save(userData);
         BeanUtils.copyProperties(userData, request);
-        return messageResponse(request);
+        return MessageResponse.response(request);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService<UserDto, UserData> {
         BeanUtils.copyProperties(request, userData);
         userData = userRepository.save(userData);
         BeanUtils.copyProperties(userData, request);
-        return messageResponse(request);
+        return MessageResponse.response(request);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class UserServiceImpl implements UserService<UserDto, UserData> {
             BeanUtils.copyProperties(userData, userDto);
             return userDto;
         });
-        return messageResponse(userDtoPage);
+        return MessageResponse.response(userDtoPage);
     }
 
     @Override
@@ -70,7 +71,7 @@ public class UserServiceImpl implements UserService<UserDto, UserData> {
         UserData userData = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(UserData.class, username));
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(userData, userDto);
-        return messageResponse(userDto);
+        return MessageResponse.response(userDto);
     }
 
     @Override
@@ -91,10 +92,4 @@ public class UserServiceImpl implements UserService<UserDto, UserData> {
         userRepository.save(follower);
     }
 
-
-    private <T> MessageResponse<T> messageResponse(T data) {
-        MessageResponse<T> response = new MessageResponse<>();
-        response.setResult(data);
-        return response;
-    }
 }
