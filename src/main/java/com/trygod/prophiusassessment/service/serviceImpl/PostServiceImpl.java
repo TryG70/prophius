@@ -4,11 +4,13 @@ import com.querydsl.core.types.Predicate;
 import com.trygod.prophiusassessment.data.PostData;
 import com.trygod.prophiusassessment.data.UserData;
 import com.trygod.prophiusassessment.dto.PostDto;
+import com.trygod.prophiusassessment.dto.UserDto;
 import com.trygod.prophiusassessment.dto.response.MessageResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.mapper.PostMapper;
 import com.trygod.prophiusassessment.repository.PostRepository;
 import com.trygod.prophiusassessment.service.PostService;
+import com.trygod.prophiusassessment.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Service;
 public class PostServiceImpl implements PostService<PostDto, PostData> {
 
     private final PostRepository postRepository;
+
+    private final UserService<UserDto, UserData> userService;
 
     private final PostMapper postMapper;
 
@@ -65,9 +69,28 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
 
     @Override
     public MessageResponse<Page<PostDto>> search(String search, PageRequest pageRequest) {
-        Page<PostDto> userDtoPage = postRepository.findAll(new UserData().buildPredicate(search), pageRequest)
-                .map(postMapper::toDTO);
-        return messageResponse(userDtoPage);
+//        Page<PostDto> userDtoPage = postRepository.findAll(new UserData().buildPredicate(search), pageRequest)
+//                .map(postMapper::toDTO);
+//        return messageResponse(userDtoPage);
+        return null;
+    }
+
+    @Override
+    public void likePost(Long postId, Long userId) {
+        PostData postData = findById(postId);
+        UserData userData = userService.findById(userId);
+        postData.getLikedBy().add(userData);
+        postData.setLikeCount(postData.getLikedBy().size());
+        postRepository.save(postData);
+    }
+
+    @Override
+    public void unlikePost(Long postId, Long userId) {
+        PostData postData = findById(postId);
+        UserData userData = userService.findById(userId);
+        postData.getLikedBy().remove(userData);
+        postData.setLikeCount(postData.getLikedBy().size());
+        postRepository.save(postData);
     }
 
     private <T> MessageResponse<T> messageResponse(T data) {

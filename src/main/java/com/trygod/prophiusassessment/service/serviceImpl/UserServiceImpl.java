@@ -56,13 +56,14 @@ public class UserServiceImpl implements UserService<UserDto, UserData> {
 
     @Override
     public MessageResponse<Page<UserDto>> search(String search, PageRequest pageRequest) {
-        Page<UserDto> userDtoPage = userRepository.findAll(new UserData().buildPredicate(search), pageRequest)
-                .map(userData -> {
-                    UserDto userDto = new UserDto();
-                    BeanUtils.copyProperties(userData, userDto);
-                    return userDto;
-                });
-        return messageResponse(userDtoPage);
+//        Page<UserDto> userDtoPage = userRepository.findAll(new UserData().buildPredicate(search), pageRequest)
+//                .map(userData -> {
+//                    UserDto userDto = new UserDto();
+//                    BeanUtils.copyProperties(userData, userDto);
+//                    return userDto;
+//                });
+//        return messageResponse(userDtoPage);
+        return null;
     }
 
     @Override
