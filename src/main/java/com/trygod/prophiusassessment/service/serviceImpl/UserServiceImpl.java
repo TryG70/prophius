@@ -122,14 +122,15 @@ public class UserServiceImpl implements UserService<UserDto, UserData, UserRespo
     }
 
     @Override
+    @Transactional
     public void unfollowUser(Long followerId, Long followeeId) {
         UserData follower = findById(followerId);
         UserData followee = findById(followeeId);
 
-        follower.getFollowers().remove(followee);
         followee.getFollowing().remove(follower);
-        userRepository.save(follower);
+        follower.getFollowers().remove(followee);
         userRepository.save(followee);
+        userRepository.save(follower);
     }
 
 }

@@ -27,7 +27,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -141,13 +140,13 @@ class UserServiceImplTest {
 
         final Optional<UserData> optionalUserData = Optional.of(userData);
         when(mockUserRepository.findById(1L)).thenReturn(optionalUserData);
-
-        when(mockUserRepository.save(entity)).thenReturn(userData);
+        when(mockUserRepository.save(userData)).thenReturn(userData);
 
         final UserResponse result = userServiceImplUnderTest.update(1L, request);
 
         assertThat(result).isEqualTo(expectedResult);
-        verify(mockUserRepository, times(1)).save(entity);
+        verify(mockUserRepository, times(1)).findById(1L);
+        verify(mockUserRepository, times(1)).save(userData);
     }
 
     @Test
@@ -259,7 +258,10 @@ class UserServiceImplTest {
 
         userServiceImplUnderTest.followUser(1L, 2L);
 
+        assertThat(userData.getFollowers()).containsExactly(userData1);
+        assertThat(userData1.getFollowing()).contains(userData);
         verify(mockUserRepository, times(1)).save(userData);
+        verify(mockUserRepository, times(1)).save(userData1);
         verify(mockUserRepository, times(1)).findById(1L);
         verify(mockUserRepository, times(1)).findById(2L);
     }
@@ -273,6 +275,8 @@ class UserServiceImplTest {
         userData1.setPassword("password");
         userData1.setEmail("email");
         userData1.setProfilePicture("profilePicture");
+        userData.getFollowers().add(userData1);
+        userData1.getFollowing().add(userData);
         final Optional<UserData> optionalUserData = Optional.of(userData);
         final Optional<UserData> optionalUserData1 = Optional.of(userData1);
         when(mockUserRepository.findById(1L)).thenReturn(optionalUserData);
@@ -280,7 +284,10 @@ class UserServiceImplTest {
 
         userServiceImplUnderTest.unfollowUser(1L, 2L);
 
+        assertThat(userData.getFollowers()).doesNotContain(userData1);
+        assertThat(userData1.getFollowing()).doesNotContain(userData);
         verify(mockUserRepository, times(1)).save(userData);
+        verify(mockUserRepository, times(1)).save(userData1);
         verify(mockUserRepository, times(1)).findById(1L);
         verify(mockUserRepository, times(1)).findById(2L);
     }

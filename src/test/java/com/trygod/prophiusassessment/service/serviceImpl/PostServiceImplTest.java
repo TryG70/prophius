@@ -13,6 +13,7 @@ import com.trygod.prophiusassessment.dto.response.UserResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.mapper.PostMapper;
 import com.trygod.prophiusassessment.repository.PostRepository;
+import com.trygod.prophiusassessment.repository.UserRepository;
 import com.trygod.prophiusassessment.service.NotificationService;
 import com.trygod.prophiusassessment.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +42,8 @@ class PostServiceImplTest {
 
     @Mock
     private PostRepository mockPostRepository;
+    @Mock
+    private UserRepository mockUserRepository;
     @Mock
     private UserService<UserDto, UserData, UserResponse> mockUserService;
     @Mock
@@ -85,6 +88,8 @@ class PostServiceImplTest {
 
         savedPostData = new PostData();
         savedPostData.setId(0L);
+        savedPostData.setContent("content");
+        savedPostData.setUser(user);
 
         postResponse = new PostResponse();
         postResponse.setId(0L);
@@ -98,6 +103,7 @@ class PostServiceImplTest {
         when(mockPostMapper.toEntity(request)).thenReturn(postData);
         when(mockPostRepository.save(postData)).thenReturn(savedPostData);
         when(mockPostMapper.toDTO(savedPostData)).thenReturn(postResponse);
+        when(mockUserRepository.save(user)).thenReturn(null);
 
         PostResponse result = postServiceImplUnderTest.create(request);
 
@@ -105,6 +111,7 @@ class PostServiceImplTest {
         verify(mockPostRepository, times(1)).save(postData);
         verify(mockPostMapper, times(1)).toEntity(request);
         verify(mockPostMapper, times(1)).toDTO(savedPostData);
+        verify(mockUserRepository, times(1)).save(user);
 
     }
 

@@ -5,6 +5,8 @@ import lombok.Data;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Objects;
+
 
 @Entity
 @Data
@@ -39,4 +41,19 @@ public class UserData extends BaseEntityData {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<NotificationData> notifications = new HashSet<>();
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, email, getId());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserData userData = (UserData) o;
+        return Objects.equals(username, userData.username) &&
+                Objects.equals(email, userData.email) &&
+                Objects.equals(getId(), userData.getId());
+    }
 }
