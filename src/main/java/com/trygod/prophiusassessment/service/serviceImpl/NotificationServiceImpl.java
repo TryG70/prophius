@@ -3,23 +3,29 @@ package com.trygod.prophiusassessment.service.serviceImpl;
 import com.trygod.prophiusassessment.data.NotificationData;
 import com.trygod.prophiusassessment.data.UserData;
 import com.trygod.prophiusassessment.dto.UserDto;
+import com.trygod.prophiusassessment.dto.response.MessageResponse;
+import com.trygod.prophiusassessment.dto.response.NotificationResponse;
+import com.trygod.prophiusassessment.dto.response.UserResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.repository.NotificationRepository;
 import com.trygod.prophiusassessment.service.NotificationService;
 import com.trygod.prophiusassessment.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationServiceImpl implements NotificationService {
+public class NotificationServiceImpl implements NotificationService<NotificationResponse, NotificationData> {
 
     private final NotificationRepository notificationRepository;
 
-    private final UserService<UserDto, UserData> userService;
+    private final UserService<UserDto, UserData, UserResponse> userService;
 
     @Override
     public void notifyUser(Long userId, String message) {
@@ -62,4 +68,20 @@ public class NotificationServiceImpl implements NotificationService {
     public void deleteAllNotifications(Long userId) {
         notificationRepository.deleteAllByUser_Id(userId);
     }
+
+    @Override
+    public MessageResponse<Page<NotificationResponse>> findUserNotifications(Long userId, Pageable pageable) {
+
+        Page<NotificationData> notificationDataPage = notificationRepository.findAllByUser_IdOrderByCreatedDateDesc(userId, pageable);
+
+        Page<NotificationResponse> notificationResponsePage = notificationDataPage.map(notificationData -> {
+            NotificationResponse notificationResponse = new NotificationResponse();
+            BeanUtils.copyProperties(notificationData, notificationResponse);
+            return notificationResponse;
+        });
+
+        return MessageResponse.response(notificationResponsePage);
+    }
+
+
 }

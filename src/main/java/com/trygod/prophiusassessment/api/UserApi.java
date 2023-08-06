@@ -16,29 +16,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpStatus.CREATED;
-
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Tag(name = "User Controller", description = "Endpoints for managing users")
 public class UserApi {
 
-    private final UserService<UserDto, UserData> userService;
-
-    @PostMapping
-    @Operation(summary = "Create a new user")
-    public ResponseEntity<MessageResponse<UserDto>> createUser(@RequestBody @Valid UserDto userDto) {
-        return new ResponseEntity<>(userService.create(userDto), CREATED);
-    }
+    private final UserService<UserDto, UserData, UserResponse> userService;
 
     @PutMapping("/{id}")
     @Operation(summary = "Update an existing user by ID")
-    public ResponseEntity<MessageResponse<UserDto>> updateUser(
+    public ResponseEntity<MessageResponse<UserResponse>> updateUser(
             @PathVariable @Parameter(description = "User ID", required = true) Long id,
-            @RequestBody UserDto userDto
+            @RequestBody @Valid UserDto userDto
     ) {
-        return ResponseEntity.ok(userService.update(id, userDto));
+        UserResponse userResponse = userService.update(id, userDto);
+        return ResponseEntity.ok(MessageResponse.response(userResponse));
     }
 
     @DeleteMapping("/{id}")
@@ -59,23 +52,23 @@ public class UserApi {
         return ResponseEntity.ok(MessageResponse.response(userResponse));
     }
 
-    @GetMapping(params = {"page", "size", "sort", "search"})
+    @GetMapping(value = "/",params = {"page", "size", "sort", "search"})
     @Operation(summary = "Search for users by keyword")
-    public ResponseEntity<MessageResponse<Page<UserDto>>> searchUsers(
+    public ResponseEntity<MessageResponse<Page<UserResponse>>> searchUsers(
             @RequestParam @Parameter(description = "Keyword to search for", required = true) String keyWord,
             Pageable pageable
     ) {
-        MessageResponse<Page<UserDto>> userDtoPage = userService.search(keyWord, pageable);
-        return ResponseEntity.ok(userDtoPage);
+        MessageResponse<Page<UserResponse>> userResponsePage = userService.search(keyWord, pageable);
+        return ResponseEntity.ok(userResponsePage);
     }
 
     @GetMapping("/username/{username}")
     @Operation(summary = "Get a user by username")
-    public ResponseEntity<MessageResponse<UserDto>> getUserByUsername(
+    public ResponseEntity<MessageResponse<UserResponse>> getUserByUsername(
             @PathVariable @Parameter(description = "Username", required = true) String username
     ) {
-        MessageResponse<UserDto> userDto = userService.findByUsername(username);
-        return ResponseEntity.ok(userDto);
+        UserResponse userResponse = userService.findByUsername(username);
+        return ResponseEntity.ok(MessageResponse.response(userResponse));
     }
 
     @PatchMapping("/{followerId}/follow/{followeeId}")

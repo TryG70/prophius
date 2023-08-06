@@ -1,7 +1,5 @@
 package com.trygod.prophiusassessment.data;
 
-
-import com.querydsl.core.BooleanBuilder;
 import jakarta.persistence.*;
 import lombok.Data;
 

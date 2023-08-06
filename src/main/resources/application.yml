@@ -5,30 +5,21 @@ spring:
   application:
     name: "prophius-assessment"
 
+  profiles:
+    active: postgres
+
   devtools:
     restart:
       enabled: true
 
-  datasource:
-    url: jdbc:postgresql://localhost:5678/prophius
-    username: postgres
-    password: md5d8861c5b33bc418686912b1c9512c83f
-    driver-class-name: org.postgresql.Driver
-
-    jpa:
-      hibernate:
-        ddl-auto: create-drop
-        naming:
-          implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
-      show-sql: false
-      properties:
-        hibernate:
-          format_sql: true
-          dialect: org.hibernate.dialect.PostgreSQL94Dialect
-
   security:
     user:
       roles: admin
+
+
+app:
+  jwt-config:
+    secret-key: ${SECRET_KEY:TRYBDHBBU9402hHKNJBBBBJBSJBJIHIHJBHNJNJJFDVSJNJGFNJJVJDNJN}
 
 management:
   endpoints:
@@ -41,6 +32,11 @@ management:
 springdoc:
   show-actuator: true
   swagger-ui:
+    enabled: true
     operationsSorter: method
     path: /swagger-ui.html
+  api-docs:
+    path: /api=docs
+
+
 

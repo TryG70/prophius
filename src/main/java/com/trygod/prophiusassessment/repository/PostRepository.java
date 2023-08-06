@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostRepository extends JpaRepository<PostData, Long> {
 
-    Page<PostData> findAll(Pageable pageable);
+    Page<PostData> findAllByUser_IdOrderByCreatedDateDesc(Long userId, Pageable pageable);
 
     Page<PostData> findAllByContentContainingIgnoreCase(String keyWord, Pageable pageable);
 }

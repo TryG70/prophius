@@ -1,6 +1,8 @@
 package com.trygod.prophiusassessment.repository;
 
 import com.trygod.prophiusassessment.data.NotificationData;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +14,6 @@ public interface NotificationRepository extends JpaRepository<NotificationData, 
     List<NotificationData> findAllByUser_Id(Long userId);
 
     void deleteAllByUser_Id(Long userId);
+
+    Page<NotificationData> findAllByUser_IdOrderByCreatedDateDesc(Long userId, Pageable pageable);
 }

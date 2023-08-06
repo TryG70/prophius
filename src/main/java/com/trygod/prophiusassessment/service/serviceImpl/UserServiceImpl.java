@@ -1,44 +1,77 @@
 package com.trygod.prophiusassessment.service.serviceImpl;
 
+import com.trygod.prophiusassessment.config.jwt.JwtUtil;
 import com.trygod.prophiusassessment.data.UserData;
 import com.trygod.prophiusassessment.dto.UserDto;
+import com.trygod.prophiusassessment.dto.request.AuthenticateUserDto;
 import com.trygod.prophiusassessment.dto.response.MessageResponse;
+import com.trygod.prophiusassessment.dto.response.UserResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.repository.UserRepository;
 import com.trygod.prophiusassessment.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService<UserDto, UserData> {
+@Slf4j
+public class UserServiceImpl implements UserService<UserDto, UserData, UserResponse> {
 
     private final UserRepository userRepository;
 
+    private final JwtUtil jwtUtil;
+
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private final AuthenticationManager authenticationManager;
+
     @Override
-    public MessageResponse<UserDto> create(UserDto request) {
+    public UserResponse create(UserDto request) {
         UserData userData = new UserData();
         BeanUtils.copyProperties(request, userData);
         userData.setPassword(passwordEncoder.encode(request.getPassword()));
         userData = userRepository.save(userData);
-        BeanUtils.copyProperties(userData, request);
-        return MessageResponse.response(request);
+        UserResponse userResponse = new UserResponse();
+        BeanUtils.copyProperties(userData, userResponse);
+        return userResponse;
     }
 
     @Override
-    public MessageResponse<UserDto> update(Long id, UserDto request) {
+    public String authenticateUser(AuthenticateUserDto request) {
+        log.info("AUTH REQUEST {}", request);
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Login Failed ");
+        }
+        log.info("AUTH REQUEST {}", request);
+
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return jwtUtil.generateToken(request.getEmail());
+    }
+
+    @Override
+    public UserResponse update(Long id, UserDto request) {
         UserData userData = findById(id);
         BeanUtils.copyProperties(request, userData);
         userData = userRepository.save(userData);
-        BeanUtils.copyProperties(userData, request);
-        return MessageResponse.response(request);
+        UserResponse userResponse = new UserResponse();
+        BeanUtils.copyProperties(userData, userResponse);
+        return userResponse;
     }
 
     @Override
@@ -56,22 +89,22 @@ public class UserServiceImpl implements UserService<UserDto, UserData> {
     }
 
     @Override
-    public MessageResponse<Page<UserDto>> search(String keyWord, Pageable pageable) {
+    public MessageResponse<Page<UserResponse>> search(String keyWord, Pageable pageable) {
         Page<UserData> userDataPage = userRepository.findAllByUsernameContainingIgnoreCase(keyWord, pageable);
-        Page<UserDto> userDtoPage = userDataPage.map(userData -> {
-            UserDto userDto = new UserDto();
-            BeanUtils.copyProperties(userData, userDto);
-            return userDto;
+        Page<UserResponse> userResponsePage = userDataPage.map(userData -> {
+            UserResponse userResponse = new UserResponse();
+            BeanUtils.copyProperties(userData, userResponse);
+            return userResponse;
         });
-        return MessageResponse.response(userDtoPage);
+        return MessageResponse.response(userResponsePage);
     }
 
     @Override
-    public MessageResponse<UserDto> findByUsername(String username) {
+    public UserResponse findByUsername(String username) {
         UserData userData = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(UserData.class, username));
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(userData, userDto);
-        return MessageResponse.response(userDto);
+        UserResponse userResponse = new UserResponse();
+        BeanUtils.copyProperties(userData, userResponse);
+        return userResponse;
     }
 
     @Override

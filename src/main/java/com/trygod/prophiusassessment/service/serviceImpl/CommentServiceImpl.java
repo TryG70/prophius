@@ -1,8 +1,11 @@
 package com.trygod.prophiusassessment.service.serviceImpl;
 
 import com.trygod.prophiusassessment.data.CommentData;
+import com.trygod.prophiusassessment.data.NotificationData;
 import com.trygod.prophiusassessment.dto.CommentDto;
+import com.trygod.prophiusassessment.dto.response.CommentResponse;
 import com.trygod.prophiusassessment.dto.response.MessageResponse;
+import com.trygod.prophiusassessment.dto.response.NotificationResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.mapper.CommentMapper;
 import com.trygod.prophiusassessment.repository.CommentRepository;
@@ -17,31 +20,31 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CommentServiceImpl implements CommentService<CommentDto, CommentData> {
+public class CommentServiceImpl implements CommentService<CommentDto, CommentData, CommentResponse> {
 
     private final CommentRepository commentRepository;
 
-    private final NotificationService notificationService;
+    private final NotificationService<NotificationResponse, NotificationData> notificationService;
 
     private final CommentMapper commentMapper;
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public MessageResponse<CommentDto> create(CommentDto request) {
+    public CommentResponse create(CommentDto request) {
         CommentData commentData = commentMapper.toEntity(request);
         commentData = commentRepository.save(commentData);
         Long postOwnerId = commentData.getPost().getUser().getId();
         notificationService.notifyUser(postOwnerId, commentData.getUser().getUsername() + " commented on your post");
-        return MessageResponse.response(commentMapper.toDTO(commentData));
+        return commentMapper.toDTO(commentData);
     }
 
     @Override
-    public MessageResponse<CommentDto> update(Long id, CommentDto request) {
+    public CommentResponse update(Long id, CommentDto request) {
         CommentData savedCommentData = findById(id);
         CommentData commentData = commentMapper.toEntity(request);
         BeanUtils.copyProperties(commentData, savedCommentData);
         savedCommentData = commentRepository.save(savedCommentData);
-        return MessageResponse.response(commentMapper.toDTO(savedCommentData));
+        return commentMapper.toDTO(savedCommentData);
 
     }
 
@@ -60,8 +63,8 @@ public class CommentServiceImpl implements CommentService<CommentDto, CommentDat
     }
 
     @Override
-    public MessageResponse<Page<CommentDto>> findAll(Pageable pageable) {
-        Page<CommentData> commentDataPage = commentRepository.findAll(pageable);
+    public MessageResponse<Page<CommentResponse>> findAll(Long id, Pageable pageable) {
+        Page<CommentData> commentDataPage = commentRepository.findAllByPost_Id(id, pageable);
         return MessageResponse.response(commentDataPage.map(commentMapper::toDTO));
     }
 }

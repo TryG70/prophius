@@ -17,7 +17,7 @@ public class BaseEntityData {
 
     @CreationTimestamp
     @Column(name="CREATED_DATE")
-    private Date creadtedDate;
+    private Date createdDate;
 
     @UpdateTimestamp
     @Column(name="UPDATED_DATE")

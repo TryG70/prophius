@@ -1,14 +1,12 @@
 package com.trygod.prophiusassessment.service;
 
-import com.trygod.prophiusassessment.data.UserData;
-import com.trygod.prophiusassessment.dto.UserDto;
-import com.trygod.prophiusassessment.dto.response.MessageResponse;
-import com.trygod.prophiusassessment.exception.NotFoundException;
-import org.springframework.beans.BeanUtils;
+import com.trygod.prophiusassessment.dto.request.AuthenticateUserDto;
 
-public interface UserService<T, U> extends BaseEntityService<T, U>, SearchService<T>{
+public interface UserService<T, U, V> extends BaseEntityService<T, U, V>, SearchService<V>{
 
-    MessageResponse<UserDto> findByUsername(String username);
+    V findByUsername(String username);
+
+    String authenticateUser(AuthenticateUserDto request);
 
     void followUser(Long followerId, Long followeeId);
 

@@ -1,12 +1,10 @@
 package com.trygod.prophiusassessment.service;
 
-import com.trygod.prophiusassessment.dto.response.MessageResponse;
+public interface BaseEntityService<T, U, V> {
 
-public interface BaseEntityService<T, U> {
+    V create(T request);
 
-    MessageResponse<T> create(T request);
-
-    MessageResponse<T> update(Long id, T request);
+    V update(Long id, T request);
 
     void delete(Long id);
 

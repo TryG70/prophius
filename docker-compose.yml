@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my-postgres
+    restart: always
+    ports:
+      - "5432:5433"
+    environment:
+      POSTGRES_DB: prophius
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 879470
+
+  spring-app:
+    image: prophius-assessment-trygod:latest
+    container_name: prophius-assessment
+    restart: always
+    ports:
+      - "8080:5060"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5433/prophius
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 879470

@@ -1,10 +1,14 @@
 package com.trygod.prophiusassessment.service.serviceImpl;
 
+import com.trygod.prophiusassessment.data.NotificationData;
 import com.trygod.prophiusassessment.data.PostData;
 import com.trygod.prophiusassessment.data.UserData;
 import com.trygod.prophiusassessment.dto.PostDto;
 import com.trygod.prophiusassessment.dto.UserDto;
 import com.trygod.prophiusassessment.dto.response.MessageResponse;
+import com.trygod.prophiusassessment.dto.response.NotificationResponse;
+import com.trygod.prophiusassessment.dto.response.PostResponse;
+import com.trygod.prophiusassessment.dto.response.UserResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.mapper.PostMapper;
 import com.trygod.prophiusassessment.repository.PostRepository;
@@ -20,30 +24,30 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class PostServiceImpl implements PostService<PostDto, PostData> {
+public class PostServiceImpl implements PostService<PostDto, PostData, PostResponse> {
 
     private final PostRepository postRepository;
 
-    private final UserService<UserDto, UserData> userService;
+    private final UserService<UserDto, UserData, UserResponse> userService;
 
-    private final NotificationService notificationService;
+    private final NotificationService<NotificationResponse, NotificationData> notificationService;
 
     private final PostMapper postMapper;
 
     @Override
-    public MessageResponse<PostDto> create(PostDto request) {
+    public PostResponse create(PostDto request) {
         PostData postData = postMapper.toEntity(request);
         postData = postRepository.save(postData);
-        return MessageResponse.response(postMapper.toDTO(postData));
+        return postMapper.toDTO(postData);
     }
 
     @Override
-    public MessageResponse<PostDto> update(Long id, PostDto request) {
+    public PostResponse update(Long id, PostDto request) {
         PostData savedPostData = findById(id);
         PostData postData = postMapper.toEntity(request);
         BeanUtils.copyProperties(postData, savedPostData);
         savedPostData = postRepository.save(savedPostData);
-        return MessageResponse.response(postMapper.toDTO(savedPostData));
+        return postMapper.toDTO(savedPostData);
     }
 
     @Override
@@ -61,14 +65,14 @@ public class PostServiceImpl implements PostService<PostDto, PostData> {
     }
 
     @Override
-    public MessageResponse<Page<PostDto>> findAll(Pageable pageable) {
-        Page<PostData> posts = postRepository.findAll(pageable);
+    public MessageResponse<Page<PostResponse>> findAll(Long id, Pageable pageable) {
+        Page<PostData> posts = postRepository.findAllByUser_IdOrderByCreatedDateDesc(id, pageable);
         return MessageResponse.response(posts.map(postMapper::toDTO));
     }
 
 
     @Override
-    public MessageResponse<Page<PostDto>> search(String keyword, Pageable pageable) {
+    public MessageResponse<Page<PostResponse>> search(String keyword, Pageable pageable) {
         Page<PostData> posts;
         if (keyword != null && !keyword.isEmpty()) {
             posts = postRepository.findAllByContentContainingIgnoreCase(keyword, pageable);

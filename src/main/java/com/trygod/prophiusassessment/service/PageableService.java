@@ -4,8 +4,8 @@ import com.trygod.prophiusassessment.dto.response.MessageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface PageableService<T> {
+public interface PageableService<V> {
 
-    MessageResponse<Page<T>> findAll(Pageable pageable);
+    MessageResponse<Page<V>> findAll(Long id, Pageable pageable);
 
 }
