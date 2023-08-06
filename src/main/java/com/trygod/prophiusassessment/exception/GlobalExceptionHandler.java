@@ -1,5 +1,7 @@
 package com.trygod.prophiusassessment.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ValidationException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,8 +23,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ValidationException;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;

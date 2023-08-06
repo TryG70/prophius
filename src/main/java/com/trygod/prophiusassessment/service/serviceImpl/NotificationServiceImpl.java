@@ -8,6 +8,7 @@ import com.trygod.prophiusassessment.dto.response.NotificationResponse;
 import com.trygod.prophiusassessment.dto.response.UserResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.repository.NotificationRepository;
+import com.trygod.prophiusassessment.repository.UserRepository;
 import com.trygod.prophiusassessment.service.NotificationService;
 import com.trygod.prophiusassessment.service.UserService;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,8 @@ public class NotificationServiceImpl implements NotificationService<Notification
 
     private final NotificationRepository notificationRepository;
 
+    private final UserRepository userRepository;
+
     private final UserService<UserDto, UserData, UserResponse> userService;
 
     @Override
@@ -34,6 +37,8 @@ public class NotificationServiceImpl implements NotificationService<Notification
         notificationData.setMessage(message);
         notificationData.setUser(userData);
         notificationRepository.save(notificationData);
+        userData.getNotifications().add(notificationData);
+        userRepository.save(userData);
     }
 
     @Override

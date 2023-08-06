@@ -39,15 +39,4 @@ public class UserData extends BaseEntityData {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<NotificationData> notifications = new HashSet<>();
-
-
-//    public BooleanBuilder buildPredicate(String search){
-//
-//        BooleanBuilder builder = new BooleanBuilder();
-//        QUserData qRecipient = QUserData.userData;
-//        if(!search.isBlank()){
-//            builder.or(qRecipient.username.containsIgnoreCase(search));
-//        }
-//        return builder;
-//    }
 }

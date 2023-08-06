@@ -2,6 +2,7 @@ package com.trygod.prophiusassessment.service.serviceImpl;
 
 import com.trygod.prophiusassessment.data.CommentData;
 import com.trygod.prophiusassessment.data.NotificationData;
+import com.trygod.prophiusassessment.data.PostData;
 import com.trygod.prophiusassessment.dto.CommentDto;
 import com.trygod.prophiusassessment.dto.response.CommentResponse;
 import com.trygod.prophiusassessment.dto.response.MessageResponse;
@@ -9,6 +10,7 @@ import com.trygod.prophiusassessment.dto.response.NotificationResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.mapper.CommentMapper;
 import com.trygod.prophiusassessment.repository.CommentRepository;
+import com.trygod.prophiusassessment.repository.PostRepository;
 import com.trygod.prophiusassessment.service.CommentService;
 import com.trygod.prophiusassessment.service.NotificationService;
 import jakarta.transaction.Transactional;
@@ -24,6 +26,8 @@ public class CommentServiceImpl implements CommentService<CommentDto, CommentDat
 
     private final CommentRepository commentRepository;
 
+    private final PostRepository postRepository;
+
     private final NotificationService<NotificationResponse, NotificationData> notificationService;
 
     private final CommentMapper commentMapper;
@@ -35,6 +39,9 @@ public class CommentServiceImpl implements CommentService<CommentDto, CommentDat
         commentData = commentRepository.save(commentData);
         Long postOwnerId = commentData.getPost().getUser().getId();
         notificationService.notifyUser(postOwnerId, commentData.getUser().getUsername() + " commented on your post");
+        PostData postData = commentData.getPost();
+        postData.getComments().add(commentData);
+        postRepository.save(postData);
         return commentMapper.toDTO(commentData);
     }
 

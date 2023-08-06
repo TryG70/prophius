@@ -12,6 +12,7 @@ import com.trygod.prophiusassessment.dto.response.UserResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.mapper.PostMapper;
 import com.trygod.prophiusassessment.repository.PostRepository;
+import com.trygod.prophiusassessment.repository.UserRepository;
 import com.trygod.prophiusassessment.service.NotificationService;
 import com.trygod.prophiusassessment.service.PostService;
 import com.trygod.prophiusassessment.service.UserService;
@@ -28,6 +29,8 @@ public class PostServiceImpl implements PostService<PostDto, PostData, PostRespo
 
     private final PostRepository postRepository;
 
+    private final UserRepository userRepository;
+
     private final UserService<UserDto, UserData, UserResponse> userService;
 
     private final NotificationService<NotificationResponse, NotificationData> notificationService;
@@ -38,6 +41,9 @@ public class PostServiceImpl implements PostService<PostDto, PostData, PostRespo
     public PostResponse create(PostDto request) {
         PostData postData = postMapper.toEntity(request);
         postData = postRepository.save(postData);
+        UserData userData = postData.getUser();
+        userData.getPosts().add(postData);
+        userRepository.save(userData);
         return postMapper.toDTO(postData);
     }
 

@@ -9,6 +9,7 @@ import com.trygod.prophiusassessment.dto.response.UserResponse;
 import com.trygod.prophiusassessment.exception.NotFoundException;
 import com.trygod.prophiusassessment.repository.UserRepository;
 import com.trygod.prophiusassessment.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -109,12 +110,15 @@ public class UserServiceImpl implements UserService<UserDto, UserData, UserRespo
     }
 
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public void followUser(Long followerId, Long followeeId){
         UserData follower = findById(followerId);
         UserData followee = findById(followeeId);
 
-        follower.getFollowing().add(followee);
+        follower.getFollowers().add(followee);
+        followee.getFollowing().add(follower);
         userRepository.save(follower);
+        userRepository.save(followee);
     }
 
     @Override
@@ -122,8 +126,10 @@ public class UserServiceImpl implements UserService<UserDto, UserData, UserRespo
         UserData follower = findById(followerId);
         UserData followee = findById(followeeId);
 
-        follower.getFollowing().remove(followee);
+        follower.getFollowers().remove(followee);
+        followee.getFollowing().remove(follower);
         userRepository.save(follower);
+        userRepository.save(followee);
     }
 
 }
