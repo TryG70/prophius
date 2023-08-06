@@ -60,7 +60,7 @@ You need the following to build and run the application:
 ### step 1 - clone project with Terminal from [here](https://github.com/TryG70/ClusteredData-Warehouse)
 
 ```
-git clone git@github.com:TryG70/ClusteredData-Warehouse.git
+git clone https://github.com/TryG70/prophius.git
 ```
 
 ### step 2 - move into the project directory
