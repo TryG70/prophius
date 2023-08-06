@@ -18,7 +18,7 @@ public class PostMapper {
     private final UserService<UserDto, UserData, UserResponse>  userService;
 
     public PostResponse toDTO(PostData data) {
-            PostResponse postResponse = new PostResponse();
+        PostResponse postResponse = new PostResponse();
         BeanUtils.copyProperties(data, postResponse);
         postResponse.setUserId(data.getUser().getId());
         return postResponse;

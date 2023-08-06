@@ -15,8 +15,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,11 +56,10 @@ public class UserServiceImpl implements UserService<UserDto, UserData, UserRespo
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Login Failed ");
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("Login failed");
         }
         log.info("AUTH REQUEST {}", request);
-
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return jwtUtil.generateToken(request.getEmail());
