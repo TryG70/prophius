@@ -1,4 +1,4 @@
-package com.trygod.prophiusassessment.config;
+package com.trygod.prophiusassessment.config.security;
 
 import lombok.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,4 +1,4 @@
-package com.trygod.prophiusassessment.config;
+package com.trygod.prophiusassessment.config.security;
 
 import com.trygod.prophiusassessment.data.UserData;
 import lombok.AllArgsConstructor;

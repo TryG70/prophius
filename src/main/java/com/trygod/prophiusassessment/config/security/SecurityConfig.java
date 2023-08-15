@@ -1,6 +1,6 @@
-package com.trygod.prophiusassessment.config;
+package com.trygod.prophiusassessment.config.security;
 
-import com.trygod.prophiusassessment.config.jwt.JwtAuthFilter;
+import com.trygod.prophiusassessment.config.security.jwt.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

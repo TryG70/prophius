@@ -21,6 +21,8 @@ app:
   jwt-config:
     secret-key: ${SECRET_KEY:TRYBDHBBU9402hHKNJBBBBJBSJBJIHIHJBHNJNJJFDVSJNJGFNJJVJDNJN}
 
+---
+
 management:
   endpoints:
     web:
@@ -37,6 +39,36 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /api=docs
+
+
+---
+
+aws:
+  storage:
+    bucket-name: bucketname
+    access-key: accesskey
+    secret-key: secretkey
+    region: AP_NORTHEAST_1
+
+
+---
+
+azure:
+  storage:
+    account-name: abs-account-name
+    account-key: abs-account-key
+    container-name: abs-container-name
+    blob-endpoint: "https://${azure.storage.account-name}.blob.core.windows.net/${azure.storage.container-name}"
+
+
+---
+
+google:
+  cloud:
+    storage:
+      application-credentials: "C:/path/to/file"
+      project-id: XXX-XXX
+      bucket-name: bucketname
 
 
 

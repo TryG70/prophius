@@ -1,5 +1,7 @@
-package com.trygod.prophiusassessment.exception;
+package com.trygod.prophiusassessment.exception.handler;
 
+import com.trygod.prophiusassessment.exception.NotFoundException;
+import com.trygod.prophiusassessment.exception.StorageFileNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ValidationException;
 import lombok.AllArgsConstructor;
@@ -7,8 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +32,6 @@ public class GlobalExceptionHandler {
 
     private final Logger logger = LogManager.getLogger();
 
-    @Autowired
-    private MessageSource messageSource;
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiCallError<String>> handleNotFoundException(HttpServletRequest request, NotFoundException ex) {
@@ -43,6 +41,16 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ApiCallError<>("Not found exception", Arrays.asList(ex.getMessage())));
     }
+
+    @ExceptionHandler(StorageFileNotFoundException.class)
+    public ResponseEntity<ApiCallError<String>> handleStorageFileNotFoundException(HttpServletRequest request, StorageFileNotFoundException ex) {
+        logger.error("StorageFileNotFoundException {}\n", request.getRequestURI(), ex);
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ApiCallError<>("File not found exception", Arrays.asList(ex.getMessage())));
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiCallError<String>> handleDataIntegrityViolationException(HttpServletRequest request, DataIntegrityViolationException ex) {
         logger.error("DataIntegrityViolationException {}\n", request.getRequestURI(), ex);

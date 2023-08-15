@@ -1,6 +1,6 @@
 package com.trygod.prophiusassessment.service.serviceImpl;
 
-import com.trygod.prophiusassessment.config.jwt.JwtUtil;
+import com.trygod.prophiusassessment.config.security.jwt.JwtUtil;
 import com.trygod.prophiusassessment.data.UserData;
 import com.trygod.prophiusassessment.dto.UserDto;
 import com.trygod.prophiusassessment.dto.request.AuthenticateUserDto;

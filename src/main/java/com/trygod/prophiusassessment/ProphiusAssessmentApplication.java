@@ -1,6 +1,6 @@
 package com.trygod.prophiusassessment;
 
-import com.trygod.prophiusassessment.config.AppConfig;
+import com.trygod.prophiusassessment.config.security.AppConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -1,6 +1,6 @@
-package com.trygod.prophiusassessment.config.jwt;
+package com.trygod.prophiusassessment.config.security.jwt;
 
-import com.trygod.prophiusassessment.config.AppConfig;
+import com.trygod.prophiusassessment.config.security.AppConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

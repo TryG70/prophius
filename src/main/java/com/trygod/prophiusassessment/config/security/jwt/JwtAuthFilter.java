@@ -1,6 +1,6 @@
-package com.trygod.prophiusassessment.config.jwt;
+package com.trygod.prophiusassessment.config.security.jwt;
 
-import com.trygod.prophiusassessment.config.CustomUserDetailsService;
+import com.trygod.prophiusassessment.config.security.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
