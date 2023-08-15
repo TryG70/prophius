@@ -258,10 +258,9 @@ class UserServiceImplTest {
 
         userServiceImplUnderTest.followUser(1L, 2L);
 
-        assertThat(userData.getFollowers()).containsExactly(userData1);
-        assertThat(userData1.getFollowing()).contains(userData);
+        assertThat(userData.getFollowing()).containsExactly(userData1);
+        assertThat(userData1.getFollowers()).containsExactly(userData);
         verify(mockUserRepository, times(1)).save(userData);
-        verify(mockUserRepository, times(1)).save(userData1);
         verify(mockUserRepository, times(1)).findById(1L);
         verify(mockUserRepository, times(1)).findById(2L);
     }

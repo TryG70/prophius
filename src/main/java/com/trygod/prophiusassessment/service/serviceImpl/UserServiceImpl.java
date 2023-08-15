@@ -115,10 +115,9 @@ public class UserServiceImpl implements UserService<UserDto, UserData, UserRespo
         UserData follower = findById(followerId);
         UserData followee = findById(followeeId);
 
-        follower.getFollowers().add(followee);
-        followee.getFollowing().add(follower);
+        follower.getFollowing().add(followee);
+        followee.getFollowers().add(follower);
         userRepository.save(follower);
-        userRepository.save(followee);
     }
 
     @Override

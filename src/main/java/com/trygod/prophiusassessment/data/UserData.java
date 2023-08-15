@@ -36,7 +36,7 @@ public class UserData extends BaseEntityData {
     )
     private Set<UserData> followers = new HashSet<>();
 
-    @ManyToMany(mappedBy = "followers")
+    @ManyToMany(mappedBy = "followers", cascade = CascadeType.PERSIST)
     private Set<UserData> following = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
